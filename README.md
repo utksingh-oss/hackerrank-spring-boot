@@ -1,5 +1,5 @@
 ## Spring Boot
-
+- Spring Boot is an extension of the Spring Framework that helps developers build simple and web-based applications quickly, with less code.
 - Configuring a Spring MVC application using Spring Boot is straightforward due to its ability to autoconfigure
   components
 - The entry point of a Spring Boot application is the class annotated with `@SpringBootApplication.`
@@ -129,3 +129,44 @@ mvn spring-boot:run -Dspring-boot.run.arguments="--debug"
 </dependencies>
 
 ```
+
+### Exception Handling
+- Spring Boot offers various ways to customize error handling, such as using `@ControllerAdvice`,`@ExceptionHandler`, and customizing error responses.
+- For custom exception handling:
+  1. Create custom exception
+  2. Create a GlobalExceptionHandler with `@RestControllerAdvice` with method annotated with `@ExceptionHanlder` Annotations
+  3. The `@ExceptionHandler` will handle in case any exception occurs while processing any of the requests
+#### Automatically returning response
+- You can also use `@ResponseStatus` on custom exception classes to automatically associate an HTTP status code with the exception.
+```java
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Resource not found")
+public class ResourceNotFoundException extends RuntimeException {
+  public ResourceNotFoundException(String message) {
+    super(message);
+  }
+}
+````
+#### Handling Validation Errors 
+- Spring Boot also integrates well with validation and provides automatic exception handling for validation errors.
+-  For instance, if you're using `@Valid` in your controller to validate input data, you can handle validation errors using `MethodArgumentNotValidException`.
+```java
+@RestControllerAdvice
+public class ValidationExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName = ((FieldError) error).getField();
+            String message = error.getDefaultMessage();
+            errors.put(fieldName, message);
+        });
+
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+}
+```
+***
