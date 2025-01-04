@@ -170,3 +170,62 @@ public class ValidationExceptionHandler {
 }
 ```
 ***
+### Logging
+- To configure logging and set logging levels in Spring Boot, you can leverage Spring Boot’s built-in support for logging via **SLF4J** (Simple Logging Facade for Java) and **Logback** as the default logging framework.
+- By default, Spring Boot uses Logback as the logging framework, and SLF4J as the facade for logging
+- The log output is directed to the console, and you can configure the logging levels in your `application.properties` or `application.yml` file.
+
+#### Cofiguring Logging Levels
+- You can configure the logging levels for different packages or the entire application in the `application.properties` file
+```properties
+# Set the root log level to INFO (default is INFO)
+logging.level.root=INFO
+
+# Set the logging level for Spring framework (DEBUG level for troubleshooting)
+logging.level.org.springframework.web=DEBUG
+
+# Set the logging level for a specific class or package
+logging.level.com.yourcompany=TRACE
+
+# Enable logging for Spring Boot internal logs (INFO level)
+logging.level.org.springframework.boot=INFO
+```
+```yml
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    com.yourcompany: TRACE
+    org.springframework.boot: INFO
+```
+- Spring Boot supports the following logging levels, which you can configure:
+  - **TRACE**: The finest level, used for very detailed and low-level information. This is rarely used in production.
+  - **DEBUG**: Used for debugging, providing detailed information about the application’s flow.
+  - **INFO**: The default logging level that provides general information about the application's execution.
+  - **WARN**: Used for warnings or issues that don't interrupt the application's functionality.
+  - **ERROR**: Logs errors that occur during the execution of the application.
+
+#### Adding LOGGER in classes
+```java 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+@Service
+public class MyService {
+
+    private static final Logger logger = LoggerFactory.getLogger(MyService.class);
+
+    public void performAction() {
+        logger.trace("This is a TRACE log message.");
+        logger.debug("This is a DEBUG log message.");
+        logger.info("This is an INFO log message.");
+        logger.warn("This is a WARN log message.");
+        logger.error("This is an ERROR log message.");
+    }
+}
+
+```
+- You can customize the logging output using the `logback-spring.xml` file
+- You can have different files for different profiles as well `logback-prod.xml` or `logback-dev.xml`
+*** 
